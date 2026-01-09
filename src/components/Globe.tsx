@@ -19,45 +19,37 @@ interface PathData {
   color: string;
 }
 
-function calculateGreatCirclePath(
+function calculateAntipodePath(
   start: Coordinates,
-  end: Coordinates,
   numPoints: number = 100
 ): [number, number][] {
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const toDeg = (rad: number) => (rad * 180) / Math.PI;
-
-  const lat1 = toRad(start.lat);
-  const lng1 = toRad(start.lng);
-  const lat2 = toRad(end.lat);
-  const lng2 = toRad(end.lng);
-
   const points: [number, number][] = [];
 
-  for (let i = 0; i <= numPoints; i++) {
-    const f = i / numPoints;
+  // For antipodal points, we go along the meridian (constant longitude)
+  // from start, through a pole, to the antipode
+  // This gives us exactly ONE deterministic path
 
-    const d = Math.acos(
-      Math.sin(lat1) * Math.sin(lat2) +
-      Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1)
-    );
+  const goNorth = start.lat >= 0;
+  const poleLat = goNorth ? 90 : -90;
 
-    if (d === 0) {
-      points.push([start.lat, start.lng]);
-      continue;
-    }
+  // First half: start to pole (along start's longitude)
+  const halfPoints = Math.floor(numPoints / 2);
+  for (let i = 0; i <= halfPoints; i++) {
+    const f = i / halfPoints;
+    const lat = start.lat + f * (poleLat - start.lat);
+    points.push([lat, start.lng]);
+  }
 
-    const A = Math.sin((1 - f) * d) / Math.sin(d);
-    const B = Math.sin(f * d) / Math.sin(d);
+  // Second half: pole to antipode (along antipode's longitude, which is start.lng + 180)
+  let antipodeLng = start.lng + 180;
+  if (antipodeLng > 180) antipodeLng -= 360;
 
-    const x = A * Math.cos(lat1) * Math.cos(lng1) + B * Math.cos(lat2) * Math.cos(lng2);
-    const y = A * Math.cos(lat1) * Math.sin(lng1) + B * Math.cos(lat2) * Math.sin(lng2);
-    const z = A * Math.sin(lat1) + B * Math.sin(lat2);
+  const antipodeLat = -start.lat;
 
-    const lat = toDeg(Math.atan2(z, Math.sqrt(x * x + y * y)));
-    const lng = toDeg(Math.atan2(y, x));
-
-    points.push([lat, lng]);
+  for (let i = 1; i <= halfPoints; i++) {
+    const f = i / halfPoints;
+    const lat = poleLat + f * (antipodeLat - poleLat);
+    points.push([lat, antipodeLng]);
   }
 
   return points;
@@ -127,7 +119,7 @@ export function Globe({ selectedPoint, onPointSelect }: GlobeProps) {
         },
       ];
 
-      const pathCoords = calculateGreatCirclePath(selectedPoint, antipode);
+      const pathCoords = calculateAntipodePath(selectedPoint);
       const paths: PathData[] = [{
         coords: pathCoords,
         color: '#ffffff',
