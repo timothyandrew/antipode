@@ -30,7 +30,7 @@ export function Globe({ selectedPoint, onPointSelect }: GlobeProps) {
       .pointColor((d: object) => (d as PointData).color)
       .pointLabel((d: object) => (d as PointData).label)
       .arcColor(() => ['#3b82f6', '#ef4444'])
-      .arcAltitudeAutoScale(0.5)
+      .arcAltitude(0.5)
       .arcStroke(1)
       .arcDashLength(1)
       .arcDashGap(0)
