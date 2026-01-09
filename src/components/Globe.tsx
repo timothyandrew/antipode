@@ -16,7 +16,7 @@ interface PointData {
 
 interface PathData {
   coords: [number, number][];
-  color: string;
+  colors: string[];
 }
 
 function calculateAntipodePath(
@@ -70,7 +70,7 @@ export function Globe({ selectedPoint, onPointSelect }: GlobeProps) {
       .pointRadius(0.5)
       .pointColor((d: object) => (d as PointData).color)
       .pointLabel((d: object) => (d as PointData).label)
-      .pathColor((d: object) => (d as PathData).color)
+      .pathColor((d: object) => (d as PathData).colors)
       .pathStroke(2)
       .pathPointAlt(0.001)
       .onGlobeClick(({ lat, lng }: { lat: number; lng: number }) => {
@@ -108,21 +108,32 @@ export function Globe({ selectedPoint, onPointSelect }: GlobeProps) {
         {
           lat: selectedPoint.lat,
           lng: selectedPoint.lng,
-          color: '#3b82f6',
+          color: '#06b6d4',
           label: 'Selected Point',
         },
         {
           lat: antipode.lat,
           lng: antipode.lng,
-          color: '#ef4444',
+          color: '#d946ef',
           label: 'Antipode',
         },
       ];
 
       const pathCoords = calculateAntipodePath(selectedPoint);
+
+      // Generate gradient colors from cyan to magenta (modern look)
+      const gradientColors = pathCoords.map((_, i) => {
+        const t = i / (pathCoords.length - 1);
+        // Interpolate from #06b6d4 (cyan) to #d946ef (fuchsia)
+        const r = Math.round(6 + t * (217 - 6));
+        const g = Math.round(182 + t * (70 - 182));
+        const b = Math.round(212 + t * (239 - 212));
+        return `rgb(${r}, ${g}, ${b})`;
+      });
+
       const paths: PathData[] = [{
         coords: pathCoords,
-        color: '#ffffff',
+        colors: gradientColors,
       }];
 
       globeRef.current

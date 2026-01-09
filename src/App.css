@@ -64,7 +64,7 @@ body {
 }
 
 .search-input:focus {
-  border-color: #3b82f6;
+  border-color: #06b6d4;
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -109,7 +109,7 @@ body {
 }
 
 .search-result-item:hover {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(6, 182, 212, 0.2);
 }
 
 .coordinates-panel {
@@ -147,11 +147,11 @@ body {
 }
 
 .coordinate-title.selected {
-  color: #3b82f6;
+  color: #06b6d4;
 }
 
 .coordinate-title.antipode {
-  color: #ef4444;
+  color: #d946ef;
 }
 
 .location-name {
