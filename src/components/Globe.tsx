@@ -30,11 +30,11 @@ export function Globe({ selectedPoint, onPointSelect }: GlobeProps) {
       .pointColor((d: object) => (d as PointData).color)
       .pointLabel((d: object) => (d as PointData).label)
       .arcColor(() => ['#3b82f6', '#ef4444'])
-      .arcAltitudeAutoScale(0.3)
-      .arcStroke(0.5)
-      .arcDashLength(0.4)
-      .arcDashGap(0.2)
-      .arcDashAnimateTime(1500)
+      .arcAltitudeAutoScale(0.5)
+      .arcStroke(1)
+      .arcDashLength(1)
+      .arcDashGap(0)
+      .arcDashAnimateTime(0)
       .onGlobeClick(({ lat, lng }: { lat: number; lng: number }) => {
         onPointSelect({ lat, lng });
       });
